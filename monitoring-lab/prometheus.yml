@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "ml_service"
+    metrics_path: "/metrics"
+    static_configs:
+      # Здесь ml_service:8000, а не localhost:8000, т.к. Внутри docker-compose
+      #  контейнеры видят друг друга по имени сервиса.
+      - targets: ["ml_service:8000"]

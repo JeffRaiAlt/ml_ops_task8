@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: dqops_postgres
+    environment:
+      POSTGRES_USER: dqops_user
+      POSTGRES_PASSWORD: dqops_password
+      POSTGRES_DB: cinema
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  dqops:
+    image: dqops/dqo:latest
+    container_name: dqops
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./dqops-userhome:/dqo/userhome
+    environment:
+      DQO_USER_HOME: /dqo/userhome
+      DQO_CLOUD_API_KEY: ${DQO_CLOUD_API_KEY}
+      DQO_WEBSERVER_AUTHENTICATION_METHOD: "none"
+    depends_on:
+      - postgres
+    command:
+      - "run"
+      - "--headless"
+      - "--dqo.cloud.api-key=${DQO_CLOUD_API_KEY}"
+      - "--dqo.webserver.authentication-method=none"
+
+volumes:
+  postgres_data:
